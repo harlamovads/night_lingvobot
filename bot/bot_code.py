@@ -18,7 +18,7 @@ class Form(StatesGroup):
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token="6346530233:AAEXtH8RnDhxmHwIsLI3cog_5vMClPo1BGU")
+bot = Bot(token="")
 dp = Dispatcher()
 
 
