@@ -4,12 +4,12 @@ from keys import answer_dict, task_grading, help_worth, give_tips
 
 class TeamMember:
 
-    log = open('logging.txt', 'w+')
-
     def __init__(self, name):
         self.available_help = []
         self.name = name
         self.score = 0
+        with open('logging.txt', 'a') as log:
+            log.write(f'Команда {self.name} зарегистрировалась в {strftime("%d, %b, %H:%M:%S")}\n')
 
     def answer_check(self, task_idx, ans):
         if ans == answer_dict[task_idx]:
@@ -17,10 +17,12 @@ class TeamMember:
                 self.score += task_grading[task_idx]
             elif task_idx in self.available_help:
                 self.score += task_grading[task_idx] - 1
-#            log.write(f'Команда {self.name} успешно решила задание {task_idx} в {strftime("%d %b %H:%M:%S")}\n')
+            with open('logging.txt', 'a') as log:
+                log.write(f'Команда {self.name} успешно решила задание {task_idx} в {strftime("%d %b %H:%M:%S")}\n')
             return 'Good job!'
         else:
-#            log.write(f'Команда {self.name} попыталась решить задание {task_idx} в {strftime("%d, %b, %H:%M:%S")}\n')
+            with open('logging.txt', 'a') as log:
+                log.write(f'Команда {self.name} попыталась решить задание {task_idx} в {strftime("%d, %b, %H:%M:%S")}\n')
             return 'Try again!'
 
     def get_some_help(self, task_idx):
@@ -29,7 +31,8 @@ class TeamMember:
         elif help_worth[task_idx] <= self.score and task_idx not in self.available_help:
             self.available_help.append(task_idx)
             self.score -= help_worth[task_idx]
-#            log.write(f'Команда {self.name} получила подсказку к заданию {task_idx} в {strftime("%d, %b, %H:%M:%S")}\n')
+            with open('logging.txt', 'a') as log:
+                log.write(f'Команда {self.name} получила подсказку к заданию {task_idx} в {strftime("%d, %b, %H:%M:%S")}\n')
             return give_tips[task_idx]
         else:
             return 'Sorry, you do not have enough points'
@@ -39,7 +42,7 @@ class TeamMember:
 
 
 if __name__ == "__main__":
-    log = open('logging.txt', 'w+')
+    log = open('logging.txt', 'a')
     player = TeamMember('Stacy')
     message = input()
     task = message.split()[0]

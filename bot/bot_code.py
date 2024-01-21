@@ -1,10 +1,12 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types
+from random import randint
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from TeamMember import TeamMember
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 import sqlite3
 import pandas as pd
 
@@ -20,6 +22,16 @@ logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token="6346530233:AAEXtH8RnDhxmHwIsLI3cog_5vMClPo1BGU")
 dp = Dispatcher()
+
+
+def get_keyboard():
+    buttons = [[
+            types.InlineKeyboardButton(text="Лока А", callback_data="num_1"),
+            types.InlineKeyboardButton(text="Лока Б", callback_data="num_2"),
+            types.InlineKeyboardButton(text="Лока В", callback_data="num_3")]]
+
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
 
 
 @dp.message(Command("start"))
@@ -42,22 +54,30 @@ async def cmd_reply(message: types.Message, state: FSMContext) -> None:
     print(player.name)
     await message.reply(f'Ура, команда {message.text} зарегистрирована!')
     await message.answer(f'Ваш текущий счет - {player.point_getter()} очков!')
-    await message.answer('Высылаю текст задачи: *sample text*, нажмите /solve, чтобы сдать решение!\n '
-                         'Чтобы получить подсказку, нажмите /hint')
+    await message.answer('Чтобы перейти к задачам, нажмите /solve')
     await state.set_state(Form.submit)
-
 
 # Решения
+
+
 @dp.message(Command("solve"))
 async def cmd_reply(message: types.Message, state: FSMContext) -> None:
-    await state.set_state(Form.submit)
-    await message.answer('Присылайте решение, перед ответом напишите, '
-                         'пожалуйста, номер задачи, отделив его от решения пробелом')
+    await message.answer(
+        "Выберите задачу",
+        reply_markup=get_keyboard()
+    )
+
+
+@dp.callback_query(F.data.startswith("num_"))
+async def callbacks_num(callback: types.CallbackQuery):
+    global task
+    task = callback.data.split("_")[1]
+    await callback.message.answer('Присылайте решение - или нажмите /hint, чтобы получить подсказку')
+    await callback.answer()
 
 
 @dp.message(Form.submit)
 async def cmd_reply(message: types.Message, state: FSMContext) -> None:
-    task = message.text.split()[0]
     answer = message.text
     await message.answer(player.answer_check(task, answer))
     await message.answer(f'Ваш текущий счет - {player.point_getter()} очков!')
