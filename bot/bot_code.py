@@ -41,8 +41,6 @@ async def cmd_start(message: types.Message):
     await message.answer("Чтобы зарегистрировать команду, введите /register, чтобы продолжить участие, введите /login")
 
 
-# Регистрация
-
 @dp.message(Command("register"))
 async def cmd_reply(message: types.Message, state: FSMContext) -> None:
     await state.set_state(Form.register)
@@ -55,6 +53,7 @@ async def cmd_reply(message: types.Message, state: FSMContext) -> None:
     player = TeamMember(message.text)
     await message.reply(f'Ура, команда {message.text} зарегистрирована!\n'
                         f'Ваш текущий счет - {player.point_getter()} очков!')
+    await message.reply('Чтобы начать решать задачи, пришлите в чат что угодно!')
     await state.set_state(Form.neutral)
 
 
@@ -65,13 +64,16 @@ async def callbacks_num(callback: types.CallbackQuery):
     task = callback.data.split("_")[1]
     await callback.message.answer(f'Вы в локации {task}! Что вы хотите сделать? \n'
                                   f'Чтобы отправить решение, нажмите /solve \n'
-                                  f'Чтобы получить подсказку, нажмите /hint')
+                                  f'Чтобы получить подсказку, нажмите /hint \n'
+                                  f'Чтобы посмотреть свой текущий счет, введите /score')
     await callback.answer()
 
 
 @dp.message(Command("back"))
 async def cmd_reply(message: types.Message, state: FSMContext) -> None:
-    print('back')
+    await message.answer(
+            "Выберите локацию",
+            reply_markup=get_keyboard())
     await state.set_state(Form.neutral)
 
 
@@ -83,7 +85,7 @@ async def cmd_reply(message: types.Message, state: FSMContext) -> None:
 
 @dp.message(Form.submit)
 async def cmd_reply(message: types.Message, state: FSMContext) -> None:
-    answer = message.text
+    answer = message.text.lower()
     await message.answer(player.answer_check(task, answer))
     await message.answer('Чтобы вернуться в меню, нажмите /back')
 
@@ -100,6 +102,11 @@ async def cmd_reply(message: types.Message, state: FSMContext) -> None:
                              f'Обратите внимание, что после получения подсказки вы получите на 1 балл'
                              f'меньше за решение задачи!\n'
                              f'Если вы всё еще хотите брать подсказку, отправьте "Да"')
+
+
+@dp.message(Command("score"))
+async def cmd_reply(message: types.Message, state: FSMContext) -> None:
+    await message.answer(f'У вас на счете - {player.point_getter()} очков\n')
 
 
 @dp.message(Form.help)
