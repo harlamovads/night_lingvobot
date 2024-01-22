@@ -6,6 +6,7 @@ class TeamMember:
 
     def __init__(self, name):
         self.available_help = []
+        self.solved = []
         self.name = name
         self.score = 0
         with open('logging.txt', 'a') as log:
@@ -13,20 +14,24 @@ class TeamMember:
 
     def answer_check(self, task_idx, ans):
         if ans == answer_dict[task_idx]:
-            if task_idx not in self.available_help:
-                self.score += task_grading[task_idx]
-            elif task_idx in self.available_help:
-                self.score += task_grading[task_idx] - 1
-            with open('logging.txt', 'a') as log:
-                log.write(f'Команда {self.name} успешно решила задание {task_idx} в {strftime("%d %b %H:%M:%S")}\n')
-            return 'Good job!'
+            if task_idx in self.solved:
+                return 'Sorry, you have already solved this task'
+            elif task_idx not in self.solved:
+                if task_idx not in self.available_help:
+                    self.score += task_grading[task_idx]
+                elif task_idx in self.available_help:
+                    self.score += task_grading[task_idx] - 1
+                self.solved.append(task_idx)
+                with open('logging.txt', 'a') as log:
+                    log.write(f'Команда {self.name} успешно решила задание {task_idx} в {strftime("%d %b %H:%M:%S")}\n')
+                return 'Good job!'
         else:
             with open('logging.txt', 'a') as log:
                 log.write(f'Команда {self.name} попыталась решить задание {task_idx} в {strftime("%d, %b, %H:%M:%S")}\n')
             return 'Try again!'
 
     def get_some_help(self, task_idx):
-        if help_worth[task_idx] <= self.score and task_idx in self.available_help:
+        if task_idx in self.available_help:
             return give_tips[task_idx]
         elif help_worth[task_idx] <= self.score and task_idx not in self.available_help:
             self.available_help.append(task_idx)
