@@ -4,23 +4,18 @@ from keys import answer_dict, task_grading, help_worth, give_tips
 
 class TeamMember:
 
-    def __init__(self, name):
-        self.available_help = []
-        self.solved = []
+    def __init__(self, name, score=0, solved=[], available_help=[]):
+        self.available_help = available_help
+        self.solved = solved
         self.name = name
-        self.score = 0
-        with open('logging.txt', 'a') as log:
-            log.write(f'Команда {self.name} зарегистрировалась в {strftime("%d, %b, %H:%M:%S")}\n')
+        self.score = score
 
     def answer_check(self, task_idx, ans):
         if ans == answer_dict[task_idx]:
             if task_idx in self.solved:
                 return 'Sorry, you have already solved this task'
             elif task_idx not in self.solved:
-                if task_idx not in self.available_help:
-                    self.score += task_grading[task_idx]
-                elif task_idx in self.available_help:
-                    self.score += task_grading[task_idx] - 1
+                self.score += task_grading[task_idx]
                 self.solved.append(task_idx)
                 with open('logging.txt', 'a') as log:
                     log.write(f'Команда {self.name} успешно решила задание {task_idx} в {strftime("%d %b %H:%M:%S")}\n')

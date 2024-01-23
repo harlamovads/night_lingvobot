@@ -1,0 +1,22 @@
+{
+  "1658604792": {
+    "username": "Cats",
+    "team_comp": [
+      "@zlovoblachko",
+      "@placeholder"
+    ],
+    "score": 4,
+    "solved": [
+      "1",
+      "1",
+      "2",
+      "2",
+      "3",
+      "3"
+    ],
+    "available_help": [
+      "2"
+    ],
+    "task": "3"
+  }
+}
