@@ -28,15 +28,22 @@ class Form(StatesGroup):
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token="6346530233:AAEXtH8RnDhxmHwIsLI3cog_5vMClPo1BGU")
+bot = Bot(token="")
 dp = Dispatcher(storage=MemoryStorage(), fsm_strategy=FSMStrategy.USER_IN_CHAT)
 
 
 def get_keyboard():
     buttons = [[
-        types.InlineKeyboardButton(text="Лока А", callback_data="num_1"),
-        types.InlineKeyboardButton(text="Лока Б", callback_data="num_2"),
-        types.InlineKeyboardButton(text="Лока В", callback_data="num_3")]]
+        types.InlineKeyboardButton(text="M202", callback_data="num_M202"),
+        types.InlineKeyboardButton(text="M302", callback_data="num_M302"),
+        types.InlineKeyboardButton(text="M303", callback_data="num_M303")],
+        [types.InlineKeyboardButton(text="S103", callback_data="num_S103"),
+        types.InlineKeyboardButton(text="S202", callback_data="num_S202"),
+        types.InlineKeyboardButton(text="R110", callback_data="num_R110")],
+        [types.InlineKeyboardButton(text="R207", callback_data="num_R207"),
+        types.InlineKeyboardButton(text="R201", callback_data="num_R201"),
+        types.InlineKeyboardButton(text="N206", callback_data="num_N206"),
+        types.InlineKeyboardButton(text="N204", callback_data="num_N204")]]
 
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
